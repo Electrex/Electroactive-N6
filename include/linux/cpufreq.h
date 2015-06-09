@@ -139,7 +139,6 @@ unsigned int cpufreq_quick_get_max(unsigned int cpu);
 unsigned int cpufreq_quick_get_util(unsigned int cpu);
 void disable_cpufreq(void);
 
-u64 get_cpu_idle_time(unsigned int cpu, u64 *wall, int io_busy);
 int cpufreq_get_policy(struct cpufreq_policy *policy, unsigned int cpu);
 int cpufreq_update_policy(unsigned int cpu);
 bool have_governor_per_policy(void);
@@ -423,6 +422,9 @@ extern struct cpufreq_governor cpufreq_gov_conservative;
 #elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_INTERACTIVE)
 extern struct cpufreq_governor cpufreq_gov_interactive;
 #define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_interactive)
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_ELECTROACTIVE)
+extern struct cpufreq_governor cpufreq_gov_electroactive;
+#define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_electroactive)
 #endif
 
 /*********************************************************************

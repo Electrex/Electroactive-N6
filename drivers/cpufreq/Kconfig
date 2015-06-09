@@ -94,6 +94,13 @@ config CPU_FREQ_DEFAULT_GOV_ELEMENTALX
 	help
 	  Use the CPUFreq governor 'elementalx' as default.
 
+config CPU_FREQ_DEFAULT_GOV_ELECTROACTIVE
+	bool "electroactive"
+	select CPU_FREQ_GOV_ELECTROACTIVE
+	select CPU_FREQ_GOV_PERFORMANCE
+	help
+	  Use the CPUFreq governor 'electroactive' as default.
+
 config CPU_FREQ_DEFAULT_GOV_CONSERVATIVE
 	bool "conservative"
 	select CPU_FREQ_GOV_CONSERVATIVE
@@ -180,6 +187,19 @@ config CPU_FREQ_GOV_ELEMENTALX
 
 	  To compile this driver as a module, choose M here: the
 	  module will be called cpufreq_elementalx.
+
+	  For details, take a look at linux/Documentation/cpu-freq.
+
+	  If in doubt, say N.
+
+config CPU_FREQ_GOV_ELECTROACTIVE
+	tristate "'electroactive' cpufreq policy governor"
+	select CPU_FREQ_TABLE
+	help
+	  'electroactive' - This driver adds a dynamic cpufreq policy governor.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called cpufreq_electroactive.
 
 	  For details, take a look at linux/Documentation/cpu-freq.
 
