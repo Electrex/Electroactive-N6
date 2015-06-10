@@ -63,6 +63,9 @@ module_param(migration_load_threshold, uint, 0644);
 static bool load_based_syncs;
 module_param(load_based_syncs, bool, 0644);
 
+bool wakeup_boost;
+module_param(wakeup_boost, bool, 0644);
+
 static u64 last_input_time;
 #define MIN_INPUT_INTERVAL (150 * USEC_PER_MSEC)
 
@@ -294,6 +297,16 @@ static void cpuboost_input_event(struct input_handle *handle,
 	last_input_time = ktime_to_us(ktime_get());
 }
 
+bool check_cpuboost(int cpu)
+{
+	struct cpu_sync *i_sync_info;
+	i_sync_info = &per_cpu(sync_info, cpu);
+
+	if (i_sync_info->input_boost_min > 0)
+		return true;
+	return false;
+}
+
 static int cpuboost_input_connect(struct input_handler *handler,
 		struct input_dev *dev, const struct input_device_id *id)
 {
@@ -364,6 +377,26 @@ static struct input_handler cpuboost_input_handler = {
 	.name           = "cpu-boost",
 	.id_table       = cpuboost_ids,
 };
+
+#ifdef CONFIG_STATE_NOTIFIER
+static int state_notifier_callback(struct notifier_block *this,
+				unsigned long event, void *data)
+{
+	switch (event) {
+		case STATE_NOTIFIER_ACTIVE:
+			suspended = false;
+			__wakeup_boost();
+			break;
+		case STATE_NOTIFIER_SUSPEND:
+			suspended = true;
+			break;
+		default:
+			break;
+	}
+
+	return NOTIFY_OK;
+}
+#endif
 
 static int cpu_boost_init(void)
 {
